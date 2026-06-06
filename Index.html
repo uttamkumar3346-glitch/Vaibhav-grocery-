@@ -1,341 +1,397 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="theme-color" content="#2e7d32"/>
-<title>Vaibhav Grocery</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
-body{background:#f1f8e9;min-height:100vh;}
-::-webkit-scrollbar{display:none;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-@keyframes pop{0%{transform:scale(0.75);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+import { useState, useRef, useEffect } from "react";
 
-.app{max-width:430px;margin:0 auto;background:#fff;min-height:100vh;display:flex;flex-direction:column;position:relative;}
-
-/* Header */
-.header{background:linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;}
-.store-name{font-size:20px;font-weight:800;color:#fff;}
-.tagline{font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px;}
-.cart-wrap{position:relative;cursor:pointer;font-size:26px;}
-.cart-badge{position:absolute;top:-4px;right:-4px;background:#ff5722;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;display:none;}
-
-/* Content */
-.content{flex:1;overflow-y:auto;padding-bottom:70px;}
-
-/* Banner */
-.banner{background:linear-gradient(135deg,#43a047,#66bb6a);margin:12px;border-radius:16px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
-.banner-title{color:#fff;font-weight:800;font-size:15px;}
-.banner-sub{color:rgba(255,255,255,0.85);font-size:11.5px;margin-top:3px;}
-
-/* Categories */
-.cat-row{display:flex;gap:7px;overflow-x:auto;padding:0 12px 8px;scrollbar-width:none;}
-.cat-btn{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid #c8e6c9;background:#fff;font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:.2s;}
-.cat-btn.active{background:#2e7d32;color:#fff;border-color:#2e7d32;}
-
-/* Grid */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 12px 16px;}
-.card{background:#fafffe;border:1px solid #e8f5e9;border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
-.card-emoji{font-size:32px;margin-bottom:2px;}
-.card-name{font-size:12px;font-weight:600;color:#333;}
-.card-price{font-size:15px;font-weight:800;color:#2e7d32;}
-.add-btn{background:#2e7d32;color:#fff;border:none;border-radius:8px;padding:5px 15px;font-size:12px;font-weight:700;cursor:pointer;font-family:Poppins;}
-.oos{font-size:11px;color:#bbb;font-style:italic;}
-.q-row{display:flex;align-items:center;gap:8px;}
-.q-btn{width:26px;height:26px;border-radius:8px;border:1.5px solid #c8e6c9;background:#f1f8e9;font-weight:800;font-size:14px;cursor:pointer;color:#2e7d32;font-family:Poppins;}
-.q-num{font-weight:800;color:#1b5e20;min-width:16px;text-align:center;}
-
-/* Orders */
-.sec-title{font-weight:800;font-size:16px;color:#1b5e20;margin:12px 12px 10px;}
-.o-card{background:#fafffe;border:1px solid #e8f5e9;border-radius:14px;padding:14px;margin:0 12px 10px;}
-.o-top{display:flex;justify-content:space-between;margin-bottom:6px;}
-.o-id{font-weight:800;color:#2e7d32;font-size:14px;}
-.st-tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px;}
-.o-items{font-size:13px;color:#555;margin-bottom:8px;}
-.o-bot{display:flex;justify-content:space-between;align-items:center;}
-.o-amt{font-weight:800;color:#1b5e20;font-size:14px;}
-
-/* Chat */
-.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 130px);}
-.msgs{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:10px;}
-.m-row{display:flex;align-items:flex-end;gap:7px;}
-.bot-av{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#2e7d32,#66bb6a);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.bubble{max-width:72%;padding:10px 13px;border-radius:17px;font-size:13.5px;line-height:1.55;font-weight:500;}
-.b-bub{background:#f1f8e9;color:#1b5e20;border-bottom-left-radius:4px;}
-.u-bub{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border-bottom-right-radius:4px;margin-left:auto;}
-.quick-row{display:flex;gap:7px;overflow-x:auto;padding:7px 12px;scrollbar-width:none;}
-.quick-btn{flex-shrink:0;padding:7px 12px;border:1.5px solid #c8e6c9;border-radius:20px;background:#fff;font-size:12px;font-weight:700;color:#2e7d32;cursor:pointer;white-space:nowrap;font-family:Poppins;}
-.input-bar{display:flex;padding:8px 12px 12px;gap:8px;border-top:1px solid #f0f0f0;}
-.inp{flex:1;padding:11px 14px;border-radius:22px;border:1.5px solid #e0e0e0;font-size:13.5px;outline:none;background:#fafafa;font-weight:500;color:#333;font-family:Poppins;}
-.send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#2e7d32,#43a047);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(46,125,50,0.4);}
-.dot{width:7px;height:7px;border-radius:50%;background:#43a047;display:inline-block;}
-
-/* Offers */
-.of-card{background:linear-gradient(135deg,#f1f8e9,#f9fbe7);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:center;border:1px solid #c8e6c9;margin:0 12px 10px;}
-.of-emoji{font-size:32px;flex-shrink:0;}
-.of-title{font-weight:800;color:#2e7d32;font-size:15px;margin-bottom:3px;}
-.of-desc{font-size:12.5px;color:#555;}
-.of-row{display:flex;justify-content:space-between;align-items:center;margin-top:7px;}
-.of-code{background:#2e7d32;color:#fff;padding:3px 10px;border-radius:8px;font-size:12px;font-weight:800;letter-spacing:1px;}
-.of-exp{font-size:11px;color:#999;}
-
-/* Nav */
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #f0f0f0;padding:8px 0 10px;z-index:10;}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;cursor:pointer;padding:4px 0;font-family:Poppins;}
-.nav-icon{font-size:20px;}
-.nav-label{font-size:10px;font-weight:600;color:#aaa;}
-.nav-btn.active .nav-label{color:#2e7d32;}
-
-/* Overlay */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:flex-end;justify-content:center;z-index:100;display:none;}
-.overlay.show{display:flex;}
-.drawer{width:100%;max-width:430px;background:#fff;border-radius:24px 24px 0 0;padding:20px 16px 32px;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
-.d-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.d-title{font-weight:800;font-size:17px;color:#1b5e20;}
-.close-btn{background:#f5f5f5;border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;font-weight:700;font-family:Poppins;}
-.empty-cart{text-align:center;color:#999;padding:30px 0;font-size:15px;line-height:2;}
-.c-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5;}
-.c-name{font-weight:600;font-size:13px;color:#333;}
-.c-sub{font-size:12px;color:#777;margin-top:2px;}
-.c-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:2px solid #e8f5e9;margin-top:6px;}
-.pay-btn{width:100%;padding:13px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;margin-top:10px;font-family:Poppins;}
-.wa-btn{width:100%;padding:13px;background:#25D366;color:#fff;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;margin-top:8px;font-family:Poppins;}
-.upi-apps{display:flex;justify-content:center;gap:8px;margin-bottom:16px;}
-.upi-app{background:#f1f8e9;border:1px solid #c8e6c9;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:#2e7d32;}
-.qr-box{width:130px;height:130px;border:3px solid #2e7d32;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#f9fbe7;margin:0 auto 12px;}
-.success-box{background:#fff;border-radius:24px;padding:40px 30px;text-align:center;animation:pop .4s ease;margin:20px;}
-.success-id{background:#f1f8e9;border-radius:10px;padding:8px 20px;display:inline-block;font-weight:800;color:#2e7d32;font-size:16px;}
-.tab{display:none;} .tab.active{display:block;}
-.chat-tab{display:none;flex-direction:column;} .chat-tab.active{display:flex;}
-</style>
-</head>
-<body>
-<div class="app">
-  <!-- Header -->
-  <div class="header">
-    <div>
-      <div class="store-name">🛒 Vaibhav Grocery</div>
-      <div class="tagline">Taaza • Sasta • Bharosemand</div>
-    </div>
-    <div class="cart-wrap" onclick="openCart()">
-      <span>🛍️</span>
-      <span class="cart-badge" id="cartBadge">0</span>
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div class="content">
-    <!-- HOME TAB -->
-    <div class="tab active" id="tab-home">
-      <div class="banner">
-        <div>
-          <div class="banner-title">Ghar Baithe Order Karein!</div>
-          <div class="banner-sub">Free delivery above ₹400 🎉</div>
-        </div>
-        <span style="font-size:40px">🚴</span>
-      </div>
-      <div class="cat-row" id="catRow"></div>
-      <div class="grid" id="productGrid"></div>
-    </div>
-
-    <!-- ORDERS TAB -->
-    <div class="tab" id="tab-orders">
-      <div class="sec-title">📦 Aapke Orders</div>
-      <div id="ordersList"></div>
-    </div>
-
-    <!-- CHAT TAB -->
-    <div class="chat-tab" id="tab-chat" style="height:calc(100vh - 130px)">
-      <div class="msgs" id="msgs"></div>
-      <div class="quick-row" id="quickRow"></div>
-      <div class="input-bar">
-        <input class="inp" id="chatInput" placeholder="Message likhein..." onkeydown="if(event.key==='Enter')sendMsg()"/>
-        <button class="send-btn" onclick="sendMsg()">➤</button>
-      </div>
-    </div>
-
-    <!-- OFFERS TAB -->
-    <div class="tab" id="tab-offers">
-      <div class="sec-title">🏷️ Aaj ke Offers</div>
-      <div id="offersList"></div>
-    </div>
-  </div>
-
-  <!-- Nav -->
-  <div class="nav">
-    <button class="nav-btn active" onclick="switchTab('home',this)"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
-    <button class="nav-btn" onclick="switchTab('orders',this)"><span class="nav-icon">📦</span><span class="nav-label">Orders</span></button>
-    <button class="nav-btn" onclick="switchTab('chat',this)"><span class="nav-icon">💬</span><span class="nav-label">Help</span></button>
-    <button class="nav-btn" onclick="switchTab('offers',this)"><span class="nav-icon">🏷️</span><span class="nav-label">Offers</span></button>
-  </div>
-</div>
-
-<!-- Cart Overlay -->
-<div class="overlay" id="cartOverlay" onclick="closeCart()">
-  <div class="drawer" onclick="event.stopPropagation()">
-    <div class="d-head"><span class="d-title">🛍️ Cart</span><button class="close-btn" onclick="closeCart()">✕</button></div>
-    <div id="cartItems"></div>
-  </div>
-</div>
-
-<!-- Payment Overlay -->
-<div class="overlay" id="payOverlay" onclick="closePayment()">
-  <div class="drawer" style="text-align:center" onclick="event.stopPropagation()">
-    <div class="d-head"><span class="d-title">💳 Payment</span><button class="close-btn" onclick="closePayment()">✕</button></div>
-    <div style="font-weight:700;font-size:14px;color:#333;margin-bottom:12px">UPI se Pay Karein</div>
-    <div class="qr-box"><div style="font-size:13px;font-weight:700;color:#2e7d32;line-height:1.6">QR<br>Code</div></div>
-    <div style="font-size:13px;color:#555;margin-bottom:4px">UPI ID: <strong>6200069087@ybl</strong></div>
-    <div style="font-size:30px;font-weight:800;color:#2e7d32;margin-bottom:14px" id="payAmount">₹0</div>
-    <div class="upi-apps"><div class="upi-app">GPay</div><div class="upi-app">PhonePe</div><div class="upi-app">Paytm</div><div class="upi-app">BHIM</div></div>
-    <button class="pay-btn" onclick="placeOrder()">✅ Payment Ho Gayi — Confirm</button>
-  </div>
-</div>
-
-<!-- Success Overlay -->
-<div class="overlay" id="successOverlay" style="align-items:center;justify-content:center">
-  <div class="success-box">
-    <div style="font-size:60px;margin-bottom:12px">🎉</div>
-    <div style="font-weight:800;font-size:20px;color:#1b5e20;margin-bottom:6px">Order Place Ho Gaya!</div>
-    <div style="color:#666;font-size:14px;margin-bottom:14px">2-4 ghante mein delivery hogi</div>
-    <div class="success-id" id="successId">#VG-0000</div>
-  </div>
-</div>
-
-<script>
-const PRODUCTS = [
-  {id:1,name:"Amul Milk 1L",price:62,cat:"Dairy",e:"🥛",stock:true},
-  {id:2,name:"Amul Butter 500g",price:280,cat:"Dairy",e:"🧈",stock:true},
-  {id:3,name:"Amul Paneer 200g",price:95,cat:"Dairy",e:"🧀",stock:true},
-  {id:4,name:"Basmati Rice 5kg",price:420,cat:"Grains",e:"🌾",stock:true},
-  {id:5,name:"Aashirvaad Atta 10kg",price:380,cat:"Grains",e:"🫓",stock:true},
-  {id:6,name:"Toor Dal 1kg",price:145,cat:"Grains",e:"🫘",stock:false},
-  {id:7,name:"Tomato 1kg",price:40,cat:"Veggies",e:"🍅",stock:true},
-  {id:8,name:"Onion 1kg",price:35,cat:"Veggies",e:"🧅",stock:true},
-  {id:9,name:"Potato 1kg",price:30,cat:"Veggies",e:"🥔",stock:true},
-  {id:10,name:"Surf Excel 1kg",price:220,cat:"Home",e:"🧺",stock:true},
-  {id:11,name:"Colgate 200g",price:95,cat:"Home",e:"🪥",stock:true},
-  {id:12,name:"Lays Classic",price:20,cat:"Snacks",e:"🍟",stock:true},
-  {id:13,name:"Britannia Marie",price:30,cat:"Snacks",e:"🍪",stock:true},
-  {id:14,name:"Maggi 4pk",price:72,cat:"Snacks",e:"🍜",stock:true},
-];
-const CATS = ["All","Dairy","Grains","Veggies","Home","Snacks"];
-const ORDERS = [
-  {id:"#VG-1042",status:"delivered",items:"Milk x2, Bread, Eggs",amount:180,time:"Delivered 6:30 PM"},
-  {id:"#VG-1041",status:"out",items:"Rice 5kg, Atta 10kg",amount:800,time:"Delivery by 5 PM"},
-  {id:"#VG-1039",status:"cancelled",items:"Dal 1kg, Butter",amount:425,time:"Cancelled"},
-];
-const STATUS = {
-  delivered:{bg:"#e8f5e9",color:"#2e7d32",label:"Delivered ✅"},
-  out:{bg:"#fff8e1",color:"#f57f17",label:"Out for Delivery 🚴"},
-  cancelled:{bg:"#fce4ec",color:"#c62828",label:"Cancelled ❌"},
+const STORE = {
+  name: "Vaibhav Grocery",
+  tagline: "Taaza • Sasta • Bharosemand",
+  upiId: "6200069087@ybl",
+  whatsapp: "916200069087",
+  timing: "7AM - 10PM (Mon-Sat), 8AM - 9PM (Sunday)",
+  delivery: "Rs. 30 charge, free above Rs. 400",
+  returnPolicy: "2 din ke andar return",
 };
+
+const SYSTEM_PROMPT = `Aap ${STORE.name} ke friendly customer service agent hain. Sirf Hinglish mein baat karo.
+Store: ${STORE.name} | Timing: ${STORE.timing} | Delivery: ${STORE.delivery} | Return: ${STORE.returnPolicy} | UPI: ${STORE.upiId}
+Madad: order tracking, returns, complaints, offers, delivery info. 2-3 lines mein jawab do.`;
+
+const PRODUCTS = [
+  { id:1, name:"Amul Milk 1L", price:62, category:"Dairy", emoji:"🥛", stock:true },
+  { id:2, name:"Amul Butter 500g", price:280, category:"Dairy", emoji:"🧈", stock:true },
+  { id:3, name:"Amul Paneer 200g", price:95, category:"Dairy", emoji:"🧀", stock:true },
+  { id:4, name:"Basmati Rice 5kg", price:420, category:"Grains", emoji:"🌾", stock:true },
+  { id:5, name:"Aashirvaad Atta 10kg", price:380, category:"Grains", emoji:"🫓", stock:true },
+  { id:6, name:"Toor Dal 1kg", price:145, category:"Grains", emoji:"🫘", stock:false },
+  { id:7, name:"Tomato 1kg", price:40, category:"Veggies", emoji:"🍅", stock:true },
+  { id:8, name:"Onion 1kg", price:35, category:"Veggies", emoji:"🧅", stock:true },
+  { id:9, name:"Potato 1kg", price:30, category:"Veggies", emoji:"🥔", stock:true },
+  { id:10, name:"Surf Excel 1kg", price:220, category:"Home", emoji:"🧺", stock:true },
+  { id:11, name:"Colgate 200g", price:95, category:"Home", emoji:"🪥", stock:true },
+  { id:12, name:"Lays Classic", price:20, category:"Snacks", emoji:"🍟", stock:true },
+  { id:13, name:"Britannia Marie", price:30, category:"Snacks", emoji:"🍪", stock:true },
+  { id:14, name:"Maggi 4pk", price:72, category:"Snacks", emoji:"🍜", stock:true },
+];
+
+const CATEGORIES = ["All","Dairy","Grains","Veggies","Home","Snacks"];
+
+const ORDERS = [
+  { id:"#VG-1042", status:"delivered", date:"4 June", items:"Milk x2, Bread, Eggs", amount:180, time:"Delivered 6:30 PM" },
+  { id:"#VG-1041", status:"out", date:"6 June", items:"Rice 5kg, Atta 10kg", amount:800, time:"Delivery by 5 PM" },
+  { id:"#VG-1039", status:"cancelled", date:"1 June", items:"Dal 1kg, Butter", amount:425, time:"Cancelled" },
+];
+
+const STATUS = {
+  delivered: { bg:"#e8f5e9", color:"#2e7d32", label:"Delivered ✅" },
+  out:       { bg:"#fff8e1", color:"#f57f17", label:"Out for Delivery 🚴" },
+  cancelled: { bg:"#fce4ec", color:"#c62828", label:"Cancelled ❌" },
+};
+
 const QUICK = [
-  {label:"🛒 Order Track",text:"Mera order kahan hai?"},
-  {label:"↩️ Return",text:"Product return karna hai"},
-  {label:"🕐 Timing",text:"Store ki timing kya hai?"},
-  {label:"🏷️ Offers",text:"Koi discount hai?"},
-  {label:"📦 Delivery",text:"Delivery charge kitna hai?"},
+  { label:"🛒 Order Track", text:"Mera order kahan hai?" },
+  { label:"↩️ Return",     text:"Product return karna hai" },
+  { label:"🕐 Timing",     text:"Store ki timing kya hai?" },
+  { label:"🏷️ Offers",    text:"Koi discount hai?" },
+  { label:"📦 Delivery",   text:"Delivery charge kitna hai?" },
+  { label:"😤 Complaint",  text:"Complaint darj karni hai" },
 ];
-const OFFERS = [
-  {e:"🥛",title:"Dairy Deal",desc:"Sabhi dairy pe 10% off",code:"DAIRY10",exp:"8 June tak"},
-  {e:"🌾",title:"Grain Saver",desc:"Rice/Atta 5kg+ pe ₹40 cashback",code:"GRAIN40",exp:"10 June tak"},
-  {e:"🚴",title:"Free Delivery",desc:"₹400+ order pe free delivery",code:"AUTO",exp:"Hamesha"},
-  {e:"🎁",title:"Pehli Baar",desc:"Pehle order pe ₹50 off",code:"NEW50",exp:"New users"},
-];
-const SYSTEM = `Aap Vaibhav Grocery ke friendly customer service agent hain. Sirf Hinglish mein baat karo. Store timing: 7AM-10PM (Mon-Sat), 8AM-9PM (Sunday). Delivery: Rs.30, free above Rs.400. Return: 2 din ke andar. UPI: vaibhavgrocery@upi. 2-3 lines mein jawab do.`;
 
-let cart = [], curCat = "All", chatHistory = [{role:"assistant",content:"Namaste! 🙏 Vaibhav Grocery mein swagat hai!\nTaaza • Sasta • Bharosemand\n\nKaise madad karoon?"}];
-let chatLoaded = false;
+export default function VaibhavGrocery() {
+  const [tab, setTab] = useState("home");
+  const [messages, setMessages] = useState([
+    { role:"assistant", content:`Namaste! 🙏 ${STORE.name} mein swagat hai!\n${STORE.tagline}\n\nKaise madad karoon?` },
+  ]);
+  const [input, setInput]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [cat, setCat]           = useState("All");
+  const [cart, setCart]         = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [payOpen, setPayOpen]   = useState(false);
+  const [success, setSuccess]   = useState(false);
+  const [newOrderId]            = useState("#VG-" + Math.floor(1000+Math.random()*9000));
+  const bottomRef = useRef(null);
 
-function calcTotal(){ return cart.reduce((s,i)=>s+i.price*i.qty,0); }
-function calcGrand(){ const t=calcTotal(); return t>=400?t:t+30; }
-function countItems(){ return cart.reduce((s,i)=>s+i.qty,0); }
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, loading]);
 
-function updateBadge(){
-  const b=document.getElementById("cartBadge");
-  const n=countItems();
-  b.textContent=n; b.style.display=n>0?"flex":"none";
+  const total  = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  const count  = cart.reduce((s,i) => s + i.qty, 0);
+  const grand  = total >= 400 ? total : total + 30;
+
+  function addItem(p) {
+    setCart(c => {
+      const ex = c.find(i=>i.id===p.id);
+      return ex ? c.map(i=>i.id===p.id?{...i,qty:i.qty+1}:i) : [...c,{...p,qty:1}];
+    });
+  }
+  function remItem(id) {
+    setCart(c => {
+      const ex = c.find(i=>i.id===id);
+      return ex?.qty===1 ? c.filter(i=>i.id!==id) : c.map(i=>i.id===id?{...i,qty:i.qty-1}:i);
+    });
+  }
+  function placeOrder() {
+    setSuccess(true);
+    setTimeout(() => { setSuccess(false); setPayOpen(false); setCartOpen(false); setCart([]); }, 3200);
+  }
+
+  async function sendMsg(text) {
+    const msg = text || input.trim();
+    if (!msg || loading) return;
+    setInput("");
+    const next = [...messages, { role:"user", content:msg }];
+    setMessages(next);
+    setLoading(true);
+    try {
+      const res  = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:1000,
+          system: SYSTEM_PROMPT,
+          messages: next.map(m=>({ role:m.role, content:m.content })),
+        }),
+      });
+      const data = await res.json();
+      const reply = data.content?.map(b=>b.text||"").join("") || "Kuch problem aayi. Dobara try karein.";
+      setMessages(p => [...p, { role:"assistant", content:reply }]);
+    } catch {
+      setMessages(p => [...p, { role:"assistant", content:"Network error. Please retry! 🙏" }]);
+    } finally { setLoading(false); }
+  }
+
+  const filtered = cat==="All" ? PRODUCTS : PRODUCTS.filter(p=>p.category===cat);
+
+  return (
+    <div style={S.root}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Baloo+2:wght@700;800&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+        ::-webkit-scrollbar{display:none;}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+        @keyframes pop{0%{transform:scale(0.75);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+      `}</style>
+
+      <div style={S.phone}>
+        {/* ── Header ── */}
+        <div style={S.header}>
+          <div>
+            <div style={S.storeName}>🛒 {STORE.name}</div>
+            <div style={S.tagline}>{STORE.tagline}</div>
+          </div>
+          <div style={S.cartWrap} onClick={()=>setCartOpen(true)}>
+            <span style={{fontSize:26}}>🛍️</span>
+            {count>0 && <span style={S.badge}>{count}</span>}
+          </div>
+        </div>
+
+        {/* ── Content ── */}
+        <div style={S.content}>
+
+          {/* HOME */}
+          {tab==="home" && (
+            <div style={S.scroll}>
+              <div style={S.banner}>
+                <div>
+                  <div style={S.bannerTitle}>Ghar Baithe Order Karein!</div>
+                  <div style={S.bannerSub}>Free delivery above ₹400 🎉</div>
+                </div>
+                <span style={{fontSize:40}}>🚴</span>
+              </div>
+
+              <div style={S.catRow}>
+                {CATEGORIES.map(c=>(
+                  <button key={c} style={{...S.catBtn,...(cat===c?S.catOn:{})}} onClick={()=>setCat(c)}>{c}</button>
+                ))}
+              </div>
+
+              <div style={S.grid}>
+                {filtered.map(p=>{
+                  const inCart = cart.find(i=>i.id===p.id);
+                  return (
+                    <div key={p.id} style={S.card}>
+                      <div style={{fontSize:32,marginBottom:4}}>{p.emoji}</div>
+                      <div style={S.cardName}>{p.name}</div>
+                      <div style={S.cardPrice}>₹{p.price}</div>
+                      {!p.stock
+                        ? <div style={S.oos}>Out of Stock</div>
+                        : inCart
+                          ? <div style={S.qRow}><button style={S.qBtn} onClick={()=>remItem(p.id)}>−</button><span style={S.qNum}>{inCart.qty}</span><button style={S.qBtn} onClick={()=>addItem(p)}>+</button></div>
+                          : <button style={S.addBtn} onClick={()=>addItem(p)}>+ Add</button>
+                      }
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ORDERS */}
+          {tab==="orders" && (
+            <div style={S.scroll}>
+              <div style={S.secTitle}>📦 Aapke Orders</div>
+              {ORDERS.map((o,i)=>{
+                const st = STATUS[o.status];
+                return (
+                  <div key={i} style={S.oCard}>
+                    <div style={S.oTop}>
+                      <span style={S.oId}>{o.id}</span>
+                      <span style={{...S.stTag,background:st.bg,color:st.color}}>{st.label}</span>
+                    </div>
+                    <div style={S.oItems}>{o.items}</div>
+                    <div style={S.oBot}>
+                      <span style={{fontSize:11,color:"#999"}}>{o.time}</span>
+                      <span style={S.oAmt}>₹{o.amount}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* CHAT */}
+          {tab==="chat" && (
+            <>
+              <div style={S.msgs}>
+                {messages.map((m,i)=>(
+                  <div key={i} style={{...S.mRow,justifyContent:m.role==="user"?"flex-end":"flex-start",animation:"fadeUp .2s ease"}}>
+                    {m.role==="assistant" && <div style={S.botAv}>🛒</div>}
+                    <div style={{...S.bubble,...(m.role==="user"?S.uBub:S.bBub)}}>{m.content}</div>
+                  </div>
+                ))}
+                {loading && (
+                  <div style={{...S.mRow,justifyContent:"flex-start"}}>
+                    <div style={S.botAv}>🛒</div>
+                    <div style={{...S.bubble,...S.bBub,display:"flex",gap:5,alignItems:"center"}}>
+                      {[0,.2,.4].map((d,i)=>(
+                        <span key={i} style={{width:7,height:7,borderRadius:"50%",background:"#43a047",display:"inline-block",animation:`bounce 1s ${d}s infinite`}}/>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div ref={bottomRef}/>
+              </div>
+              <div style={S.quickRow}>
+                {QUICK.map((q,i)=>(
+                  <button key={i} style={S.quickBtn} onClick={()=>sendMsg(q.text)}>{q.label}</button>
+                ))}
+              </div>
+              <div style={S.inputBar}>
+                <input style={S.inp} placeholder="Message likhein..." value={input}
+                  onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendMsg()}/>
+                <button style={S.sendBtn} onClick={()=>sendMsg()} disabled={loading||!input.trim()}>➤</button>
+              </div>
+            </>
+          )}
+
+          {/* OFFERS */}
+          {tab==="offers" && (
+            <div style={S.scroll}>
+              <div style={S.secTitle}>🏷️ Aaj ke Offers</div>
+              {[
+                {emoji:"🥛",title:"Dairy Deal",desc:"Sabhi dairy pe 10% off",code:"DAIRY10",exp:"8 June tak"},
+                {emoji:"🌾",title:"Grain Saver",desc:"Rice/Atta 5kg+ pe ₹40 cashback",code:"GRAIN40",exp:"10 June tak"},
+                {emoji:"🚴",title:"Free Delivery",desc:"₹400+ order pe free delivery",code:"AUTO",exp:"Hamesha"},
+                {emoji:"🎁",title:"Pehli Baar",desc:"Pehle order pe ₹50 off",code:"NEW50",exp:"New users"},
+              ].map((o,i)=>(
+                <div key={i} style={S.ofCard}>
+                  <span style={{fontSize:32,flexShrink:0}}>{o.emoji}</span>
+                  <div style={{flex:1}}>
+                    <div style={S.ofTitle}>{o.title}</div>
+                    <div style={S.ofDesc}>{o.desc}</div>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:7}}>
+                      <span style={S.ofCode}>{o.code}</span>
+                      <span style={{fontSize:11,color:"#999"}}>{o.exp}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Bottom Nav ── */}
+        <div style={S.nav}>
+          {[
+            {id:"home",icon:"🏠",label:"Home"},
+            {id:"orders",icon:"📦",label:"Orders"},
+            {id:"chat",icon:"💬",label:"Help"},
+            {id:"offers",icon:"🏷️",label:"Offers"},
+          ].map(n=>(
+            <button key={n.id} style={{...S.navBtn,...(tab===n.id?S.navOn:{})}} onClick={()=>setTab(n.id)}>
+              <span style={{fontSize:20}}>{n.icon}</span>
+              <span style={{fontSize:10,fontWeight:600,color:tab===n.id?"#2e7d32":"#aaa"}}>{n.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── CART DRAWER ── */}
+      {cartOpen && (
+        <div style={S.overlay} onClick={()=>setCartOpen(false)}>
+          <div style={{...S.drawer,animation:"slideUp .3s ease"}} onClick={e=>e.stopPropagation()}>
+            <div style={S.dHead}>
+              <span style={S.dTitle}>🛍️ Cart</span>
+              <button style={S.closeBtn} onClick={()=>setCartOpen(false)}>✕</button>
+            </div>
+            {cart.length===0
+              ? <div style={S.emptyCart}>Cart khali hai 😕<br/>Kuch add karein!</div>
+              : <>
+                  {cart.map(item=>(
+                    <div key={item.id} style={S.cItem}>
+                      <span style={{fontSize:22,width:32}}>{item.emoji}</span>
+                      <div style={{flex:1}}>
+                        <div style={{fontWeight:600,fontSize:13,color:"#333"}}>{item.name}</div>
+                        <div style={{fontSize:12,color:"#777",marginTop:2}}>₹{item.price} × {item.qty} = ₹{item.price*item.qty}</div>
+                      </div>
+                      <div style={S.qRow}>
+                        <button style={S.qBtn} onClick={()=>remItem(item.id)}>−</button>
+                        <span style={S.qNum}>{item.qty}</span>
+                        <button style={S.qBtn} onClick={()=>addItem(item)}>+</button>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={S.cTotal}>
+                    <span style={{fontSize:13,color:"#666"}}>Delivery: {total>=400?<span style={{color:"#2e7d32",fontWeight:700}}>FREE 🎉</span>:"₹30"}</span>
+                    <span style={{fontWeight:800,fontSize:17,color:"#1b5e20"}}>Total: ₹{grand}</span>
+                  </div>
+                  <button style={S.payBtn} onClick={()=>{setCartOpen(false);setPayOpen(true);}}>💳 Payment Karein</button>
+                  <button style={S.waBtn}
+                    onClick={()=>window.open(`https://wa.me/${STORE.whatsapp}?text=Namaste! ${STORE.name} se order:%0A${cart.map(i=>`${i.name} x${i.qty}`).join(", ")}%0ATotal: Rs.${grand}`)}>
+                    📲 WhatsApp pe Order
+                  </button>
+                </>
+            }
+          </div>
+        </div>
+      )}
+
+      {/* ── PAYMENT MODAL ── */}
+      {payOpen && !success && (
+        <div style={S.overlay} onClick={()=>setPayOpen(false)}>
+          <div style={{...S.drawer,animation:"slideUp .3s ease",textAlign:"center"}} onClick={e=>e.stopPropagation()}>
+            <div style={S.dHead}>
+              <span style={S.dTitle}>💳 Payment</span>
+              <button style={S.closeBtn} onClick={()=>setPayOpen(false)}>✕</button>
+            </div>
+            <div style={{fontWeight:700,fontSize:14,color:"#333",marginBottom:12}}>UPI se Pay Karein</div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:12}}>
+              <div style={S.qrBox}>
+                <div style={S.qrInner}>QR<br/>Code</div>
+              </div>
+            </div>
+            <div style={{fontSize:13,color:"#555",marginBottom:4}}>UPI ID: <strong>{STORE.upiId}</strong></div>
+            <div style={{fontSize:30,fontWeight:800,color:"#2e7d32",marginBottom:14}}>₹{grand}</div>
+            <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:16}}>
+              {["GPay","PhonePe","Paytm","BHIM"].map(a=>(
+                <div key={a} style={S.upiApp}>{a}</div>
+              ))}
+            </div>
+            <button style={S.payBtn} onClick={placeOrder}>✅ Payment Ho Gayi — Confirm</button>
+          </div>
+        </div>
+      )}
+
+      {/* ── SUCCESS ── */}
+      {success && (
+        <div style={{...S.overlay,alignItems:"center",justifyContent:"center"}}>
+          <div style={S.successBox}>
+            <div style={{fontSize:60,marginBottom:12}}>🎉</div>
+            <div style={{fontWeight:800,fontSize:20,color:"#1b5e20",marginBottom:6}}>Order Place Ho Gaya!</div>
+            <div style={{color:"#666",fontSize:14,marginBottom:14}}>2-4 ghante mein delivery hogi</div>
+            <div style={S.successId}>{newOrderId}</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-function renderCats(){
-  const el=document.getElementById("catRow");
-  el.innerHTML=CATS.map(c=>`<button class="cat-btn${c===curCat?" active":""}" onclick="setCat('${c}')">${c}</button>`).join("");
-}
-
-function setCat(c){ curCat=c; renderCats(); renderProducts(); }
-
-function renderProducts(){
-  const list=curCat==="All"?PRODUCTS:PRODUCTS.filter(p=>p.cat===curCat);
-  document.getElementById("productGrid").innerHTML=list.map(p=>{
-    const inCart=cart.find(i=>i.id===p.id);
-    return `<div class="card">
-      <div class="card-emoji">${p.e}</div>
-      <div class="card-name">${p.name}</div>
-      <div class="card-price">₹${p.price}</div>
-      ${!p.stock?'<div class="oos">Out of Stock</div>':inCart?`<div class="q-row"><button class="q-btn" onclick="remItem(${p.id})">−</button><span class="q-num">${inCart.qty}</span><button class="q-btn" onclick="addItem(${p.id})">+</button></div>`:`<button class="add-btn" onclick="addItem(${p.id})">+ Add</button>`}
-    </div>`;
-  }).join("");
-}
-
-function addItem(id){
-  const p=PRODUCTS.find(x=>x.id===id);
-  const ex=cart.find(i=>i.id===id);
-  if(ex) ex.qty++; else cart.push({...p,qty:1});
-  updateBadge(); renderProducts(); if(document.getElementById("cartOverlay").classList.contains("show")) renderCartItems();
-}
-function remItem(id){
-  const ex=cart.find(i=>i.id===id);
-  if(!ex) return;
-  if(ex.qty===1) cart=cart.filter(i=>i.id!==id); else ex.qty--;
-  updateBadge(); renderProducts(); if(document.getElementById("cartOverlay").classList.contains("show")) renderCartItems();
-}
-
-function renderCartItems(){
-  const el=document.getElementById("cartItems");
-  if(cart.length===0){ el.innerHTML='<div class="empty-cart">Cart khali hai 😕<br>Kuch add karein!</div>'; return; }
-  const t=calcTotal(), g=calcGrand();
-  el.innerHTML=cart.map(i=>`<div class="c-item">
-    <span style="font-size:22px;width:32px">${i.e}</span>
-    <div style="flex:1"><div class="c-name">${i.name}</div><div class="c-sub">₹${i.price} × ${i.qty} = ₹${i.price*i.qty}</div></div>
-    <div class="q-row"><button class="q-btn" onclick="remItem(${i.id})">−</button><span class="q-num">${i.qty}</span><button class="q-btn" onclick="addItem(${i.id})">+</button></div>
-  </div>`).join("")+
-  `<div class="c-total"><span style="font-size:13px;color:#666">Delivery: ${t>=400?'<span style="color:#2e7d32;font-weight:700">FREE 🎉</span>':'₹30'}</span><span style="font-weight:800;font-size:17px;color:#1b5e20">Total: ₹${g}</span></div>
-  <button class="pay-btn" onclick="openPayment()">💳 Payment Karein</button>
-  <button class="wa-btn" onclick="waOrder()">📲 WhatsApp pe Order</button>`;
-}
-
-function waOrder(){
-  const txt=cart.map(i=>`${i.name} x${i.qty}`).join(", ");
-  window.open(`https://wa.me/919999999999?text=Namaste! Vaibhav Grocery se order:%0A${txt}%0ATotal: Rs.${calcGrand()}`);
-}
-
-function openCart(){ document.getElementById("cartOverlay").classList.add("show"); renderCartItems(); }
-function closeCart(){ document.getElementById("cartOverlay").classList.remove("show"); }
-function openPayment(){ closeCart(); document.getElementById("payAmount").textContent="₹"+calcGrand(); document.getElementById("payOverlay").classList.add("show"); }
-function closePayment(){ document.getElementById("payOverlay").classList.remove("show"); }
-
-function placeOrder(){
-  closePayment();
-  const oid="#VG-"+Math.floor(1000+Math.random()*9000);
-  document.getElementById("successId").textContent=oid;
-  document.getElementById("successOverlay").classList.add("show");
-  cart=[]; updateBadge(); renderProducts();
-  setTimeout(()=>{ document.getElementById("successOverlay").classList.remove("show"); },3500);
-}
-
-function renderOrders(){
-  document.getElementById("ordersList").innerHTML=ORDERS.map(o=>{
-    const st=STATUS[o.status];
-    return `<div class="o-card">
-      <div class="o-top"><span class="o-id">${o.id}</span><span class="st-tag" style="background:${st.bg};color:${st.color}">${st.label}</span></div>
-      <div class="o-items">${o.items}</div>
-      <div class="o-bot"><span style="font-size:11px;color:#999">${o.time}</span><span class="o-amt">₹${o.amount}</span></div>
-    </div>`;
-  }).join("");
-}
-
-f
+const G = "#2e7d32";
+const S = {
+  root:     { minHeight:"100vh", background:"linear-gradient(135deg,#f1f8e9,#e8f5e9,#e0f2f1)", display:"flex", alignItems:"center", justifyContent:"center", padding:16 },
+  phone:    { width:"100%", maxWidth:420, height:"90vh", maxHeight:800, background:"#fff", borderRadius:30, boxShadow:"0 30px 80px rgba(0,0,0,0.17)", display:"flex", flexDirection:"column", overflow:"hidden" },
+  header:   { background:"linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c)", padding:"14px 18px", display:"flex", justifyContent:"space-between", alignItems:"center" },
+  storeName:{ fontFamily:"'Baloo 2',sans-serif", fontSize:20, fontWeight:800, color:"#fff" },
+  tagline:  { fontSize:11, color:"rgba(255,255,255,0.8)", marginTop:1 },
+  cartWrap: { position:"relative", cursor:"pointer" },
+  badge:    { position:"absolute", top:-4, right:-4, background:"#ff5722", color:"#fff", borderRadius:"50%", width:18, height:18, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700 },
+  content:  { flex:1, display:"flex", flexDirection:"column", overflow:"hidden" },
+  scroll:   { flex:1, overflowY:"auto", padding:"12px 12px 0" },
+  banner:   { background:"linear-gradient(135deg,#43a047,#66bb6a)", borderRadius:16, padding:"16px 20px", marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"center" },
+  bannerTitle:{ color:"#fff", fontWeight:800, fontSize:15 },
+  bannerSub:  { color:"rgba(255,255,255,0.85)", fontSize:11.5, marginTop:3 },
+  catRow:   { display:"flex", gap:7, overflowX:"auto", marginBottom:12, paddingBottom:4 },
+  catBtn:   { flexShrink:0, padding:"6px 13px", borderRadius:20, border:`1.5px solid #c8e6c9`, background:"#fff", fontSize:12, fontWeight:600, color:"#555", cursor:"pointer" },
+  catOn:    { background:G, color:"#fff", border:`1.5px solid ${G}` },
+  grid:     { display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, paddingBottom:16 },
+  card:     { background:"#fafffe", border:"1px solid #e8f5e9", borderRadius:14, padding:12, display:"flex", flexDirection:"column", alignItems:"center", gap:5 },
+  cardName: { fontSize:12, fontWeight:600, color:"#333", textAlign:"center" },
+  cardPrice:{ fontSize:15, fontWeight:800, color:G },
+  addBtn:   { background:G, color:"#fff", border:"none", borderRadius:8, padding:"5px 15px", fontSize:12, fontWeight:700, cursor:"pointer" },
+  oos:      { fontSize:11, color:"#bbb", fontStyle:"italic" },
+  qRow:     { display:"flex", alignItems:"center", gap:8 },
+  qBtn:     { width:26, height:26, borderRadius:8, border:"1.5px solid #c8e6c9", background:"#f1f8e9", fontWeight:800, fontSize:14, cursor:"pointer", color:G },
+  qNum:     { fontWeight:800, color:"#1b5e20", minWidth:16, textAlign:"center" },
+  secTitle: { fontWeight:800, fontSize:16, color:"#1b5e20", marginBottom:12 },
+  oCa
