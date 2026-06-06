@@ -1,4 +1,27 @@
-import { useState, useRef, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vaibhav Grocery</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+body{background:linear-gradient(135deg,#f1f8e9,#e8f5e9,#e0f2f1);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+::-webkit-scrollbar{display:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes pop{0%{transform:scale(0.75);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
 
 const STORE = {
   name: "Vaibhav Grocery",
@@ -15,141 +38,200 @@ Store: ${STORE.name} | Timing: ${STORE.timing} | Delivery: ${STORE.delivery} | R
 Madad: order tracking, returns, complaints, offers, delivery info. 2-3 lines mein jawab do.`;
 
 const PRODUCTS = [
-  { id:1, name:"Amul Milk 1L", price:62, category:"Dairy", emoji:"🥛", stock:true },
-  { id:2, name:"Amul Butter 500g", price:280, category:"Dairy", emoji:"🧈", stock:true },
-  { id:3, name:"Amul Paneer 200g", price:95, category:"Dairy", emoji:"🧀", stock:true },
-  { id:4, name:"Basmati Rice 5kg", price:420, category:"Grains", emoji:"🌾", stock:true },
-  { id:5, name:"Aashirvaad Atta 10kg", price:380, category:"Grains", emoji:"🫓", stock:true },
-  { id:6, name:"Toor Dal 1kg", price:145, category:"Grains", emoji:"🫘", stock:false },
-  { id:7, name:"Tomato 1kg", price:40, category:"Veggies", emoji:"🍅", stock:true },
-  { id:8, name:"Onion 1kg", price:35, category:"Veggies", emoji:"🧅", stock:true },
-  { id:9, name:"Potato 1kg", price:30, category:"Veggies", emoji:"🥔", stock:true },
-  { id:10, name:"Surf Excel 1kg", price:220, category:"Home", emoji:"🧺", stock:true },
-  { id:11, name:"Colgate 200g", price:95, category:"Home", emoji:"🪥", stock:true },
-  { id:12, name:"Lays Classic", price:20, category:"Snacks", emoji:"🍟", stock:true },
-  { id:13, name:"Britannia Marie", price:30, category:"Snacks", emoji:"🍪", stock:true },
-  { id:14, name:"Maggi 4pk", price:72, category:"Snacks", emoji:"🍜", stock:true },
+  {id:1,name:"Amul Milk 1L",price:62,category:"Dairy",emoji:"🥛",stock:true},
+  {id:2,name:"Amul Butter 500g",price:280,category:"Dairy",emoji:"🧈",stock:true},
+  {id:3,name:"Amul Paneer 200g",price:95,category:"Dairy",emoji:"🧀",stock:true},
+  {id:4,name:"Basmati Rice 5kg",price:420,category:"Grains",emoji:"🌾",stock:true},
+  {id:5,name:"Aashirvaad Atta 10kg",price:380,category:"Grains",emoji:"🫓",stock:true},
+  {id:6,name:"Toor Dal 1kg",price:145,category:"Grains",emoji:"🫘",stock:false},
+  {id:7,name:"Tomato 1kg",price:40,category:"Veggies",emoji:"🍅",stock:true},
+  {id:8,name:"Onion 1kg",price:35,category:"Veggies",emoji:"🧅",stock:true},
+  {id:9,name:"Potato 1kg",price:30,category:"Veggies",emoji:"🥔",stock:true},
+  {id:10,name:"Surf Excel 1kg",price:220,category:"Home",emoji:"🧺",stock:true},
+  {id:11,name:"Colgate 200g",price:95,category:"Home",emoji:"🪥",stock:true},
+  {id:12,name:"Lays Classic",price:20,category:"Snacks",emoji:"🍟",stock:true},
+  {id:13,name:"Britannia Marie",price:30,category:"Snacks",emoji:"🍪",stock:true},
+  {id:14,name:"Maggi 4pk",price:72,category:"Snacks",emoji:"🍜",stock:true},
 ];
 
 const CATEGORIES = ["All","Dairy","Grains","Veggies","Home","Snacks"];
 
 const ORDERS = [
-  { id:"#VG-1042", status:"delivered", date:"4 June", items:"Milk x2, Bread, Eggs", amount:180, time:"Delivered 6:30 PM" },
-  { id:"#VG-1041", status:"out", date:"6 June", items:"Rice 5kg, Atta 10kg", amount:800, time:"Delivery by 5 PM" },
-  { id:"#VG-1039", status:"cancelled", date:"1 June", items:"Dal 1kg, Butter", amount:425, time:"Cancelled" },
+  {id:"#VG-1042",status:"delivered",date:"4 June",items:"Milk x2, Bread, Eggs",amount:180,time:"Delivered 6:30 PM"},
+  {id:"#VG-1041",status:"out",date:"6 June",items:"Rice 5kg, Atta 10kg",amount:800,time:"Delivery by 5 PM"},
+  {id:"#VG-1039",status:"cancelled",date:"1 June",items:"Dal 1kg, Butter",amount:425,time:"Cancelled"},
 ];
 
 const STATUS = {
-  delivered: { bg:"#e8f5e9", color:"#2e7d32", label:"Delivered ✅" },
-  out:       { bg:"#fff8e1", color:"#f57f17", label:"Out for Delivery 🚴" },
-  cancelled: { bg:"#fce4ec", color:"#c62828", label:"Cancelled ❌" },
+  delivered:{bg:"#e8f5e9",color:"#2e7d32",label:"Delivered ✅"},
+  out:{bg:"#fff8e1",color:"#f57f17",label:"Out for Delivery 🚴"},
+  cancelled:{bg:"#fce4ec",color:"#c62828",label:"Cancelled ❌"},
 };
 
 const QUICK = [
-  { label:"🛒 Order Track", text:"Mera order kahan hai?" },
-  { label:"↩️ Return",     text:"Product return karna hai" },
-  { label:"🕐 Timing",     text:"Store ki timing kya hai?" },
-  { label:"🏷️ Offers",    text:"Koi discount hai?" },
-  { label:"📦 Delivery",   text:"Delivery charge kitna hai?" },
-  { label:"😤 Complaint",  text:"Complaint darj karni hai" },
+  {label:"🛒 Order Track",text:"Mera order kahan hai?"},
+  {label:"↩️ Return",text:"Product return karna hai"},
+  {label:"🕐 Timing",text:"Store ki timing kya hai?"},
+  {label:"🏷️ Offers",text:"Koi discount hai?"},
+  {label:"📦 Delivery",text:"Delivery charge kitna hai?"},
+  {label:"😤 Complaint",text:"Complaint darj karni hai"},
 ];
 
-export default function VaibhavGrocery() {
+const G = "#2e7d32";
+
+const S = {
+  root:{minHeight:"100vh",background:"linear-gradient(135deg,#f1f8e9,#e8f5e9,#e0f2f1)",display:"flex",alignItems:"center",justifyContent:"center",padding:16},
+  phone:{width:"100%",maxWidth:420,height:"90vh",maxHeight:800,background:"#fff",borderRadius:30,boxShadow:"0 30px 80px rgba(0,0,0,0.17)",display:"flex",flexDirection:"column",overflow:"hidden"},
+  header:{background:"linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c)",padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"},
+  storeName:{fontFamily:"'Baloo 2',sans-serif",fontSize:20,fontWeight:800,color:"#fff"},
+  tagline:{fontSize:11,color:"rgba(255,255,255,0.8)",marginTop:1},
+  cartWrap:{position:"relative",cursor:"pointer"},
+  badge:{position:"absolute",top:-4,right:-4,background:"#ff5722",color:"#fff",borderRadius:"50%",width:18,height:18,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700},
+  content:{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"},
+  scroll:{flex:1,overflowY:"auto",padding:"12px 12px 0"},
+  banner:{background:"linear-gradient(135deg,#43a047,#66bb6a)",borderRadius:16,padding:"16px 20px",marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"center"},
+  bannerTitle:{color:"#fff",fontWeight:800,fontSize:15},
+  bannerSub:{color:"rgba(255,255,255,0.85)",fontSize:11.5,marginTop:3},
+  catRow:{display:"flex",gap:7,overflowX:"auto",marginBottom:12,paddingBottom:4},
+  catBtn:{flexShrink:0,padding:"6px 13px",borderRadius:20,border:"1.5px solid #c8e6c9",background:"#fff",fontSize:12,fontWeight:600,color:"#555",cursor:"pointer"},
+  catOn:{background:G,color:"#fff",border:"1.5px solid "+G},
+  grid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,paddingBottom:16},
+  card:{background:"#fafffe",border:"1px solid #e8f5e9",borderRadius:14,padding:12,display:"flex",flexDirection:"column",alignItems:"center",gap:5},
+  cardName:{fontSize:12,fontWeight:600,color:"#333",textAlign:"center"},
+  cardPrice:{fontSize:15,fontWeight:800,color:G},
+  addBtn:{background:G,color:"#fff",border:"none",borderRadius:8,padding:"5px 15px",fontSize:12,fontWeight:700,cursor:"pointer"},
+  oos:{fontSize:11,color:"#bbb",fontStyle:"italic"},
+  qRow:{display:"flex",alignItems:"center",gap:8},
+  qBtn:{width:26,height:26,borderRadius:8,border:"1.5px solid #c8e6c9",background:"#f1f8e9",fontWeight:800,fontSize:14,cursor:"pointer",color:G},
+  qNum:{fontWeight:800,color:"#1b5e20",minWidth:16,textAlign:"center"},
+  secTitle:{fontWeight:800,fontSize:16,color:"#1b5e20",marginBottom:12},
+  oCard:{background:"#fafffe",border:"1px solid #e8f5e9",borderRadius:14,padding:14,marginBottom:10},
+  oTop:{display:"flex",justifyContent:"space-between",marginBottom:6},
+  oId:{fontWeight:800,color:G,fontSize:14},
+  stTag:{fontSize:11,fontWeight:700,padding:"3px 8px",borderRadius:8},
+  oItems:{fontSize:13,color:"#555",marginBottom:8},
+  oBot:{display:"flex",justifyContent:"space-between"},
+  oAmt:{fontWeight:800,color:"#1b5e20",fontSize:14},
+  msgs:{flex:1,overflowY:"auto",padding:"12px 12px 6px",display:"flex",flexDirection:"column",gap:10},
+  mRow:{display:"flex",alignItems:"flex-end",gap:7},
+  botAv:{width:30,height:30,borderRadius:10,background:"linear-gradient(135deg,"+G+",#66bb6a)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0},
+  bubble:{maxWidth:"72%",padding:"10px 13px",borderRadius:17,fontSize:13.5,lineHeight:1.55,fontWeight:500},
+  bBub:{background:"#f1f8e9",color:"#1b5e20",borderBottomLeftRadius:4},
+  uBub:{background:"linear-gradient(135deg,"+G+",#43a047)",color:"#fff",borderBottomRightRadius:4},
+  quickRow:{display:"flex",gap:7,overflowX:"auto",padding:"7px 12px"},
+  quickBtn:{flexShrink:0,padding:"7px 12px",border:"1.5px solid #c8e6c9",borderRadius:20,background:"#fff",fontSize:12,fontWeight:700,color:G,cursor:"pointer",whiteSpace:"nowrap"},
+  inputBar:{display:"flex",padding:"8px 12px 12px",gap:8,borderTop:"1px solid #f0f0f0"},
+  inp:{flex:1,padding:"11px 14px",borderRadius:22,border:"1.5px solid #e0e0e0",fontSize:13.5,outline:"none",background:"#fafafa",fontWeight:500,color:"#333"},
+  sendBtn:{width:44,height:44,borderRadius:"50%",background:"linear-gradient(135deg,"+G+",#43a047)",border:"none",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 4px 12px rgba(46,125,50,0.4)"},
+  ofCard:{background:"linear-gradient(135deg,#f1f8e9,#f9fbe7)",borderRadius:14,padding:"14px 16px",display:"flex",gap:14,alignItems:"center",border:"1px solid #c8e6c9",marginBottom:10},
+  ofTitle:{fontWeight:800,color:G,fontSize:15,marginBottom:3},
+  ofDesc:{fontSize:12.5,color:"#555"},
+  ofCode:{background:G,color:"#fff",padding:"3px 10px",borderRadius:8,fontSize:12,fontWeight:800,letterSpacing:1},
+  nav:{display:"flex",background:"#fff",borderTop:"1px solid #f0f0f0",padding:"8px 0 10px"},
+  navBtn:{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2,border:"none",background:"transparent",cursor:"pointer",padding:"4px 0"},
+  overlay:{position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:100},
+  drawer:{width:"100%",maxWidth:420,background:"#fff",borderRadius:"24px 24px 0 0",padding:"20px 16px 32px",maxHeight:"80vh",overflowY:"auto",animation:"slideUp .3s ease"},
+  dHead:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16},
+  dTitle:{fontWeight:800,fontSize:17,color:"#1b5e20"},
+  closeBtn:{background:"#f5f5f5",border:"none",borderRadius:8,width:30,height:30,cursor:"pointer",fontSize:14,fontWeight:700},
+  emptyCart:{textAlign:"center",color:"#999",padding:"30px 0",fontSize:15,lineHeight:2},
+  cItem:{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:"1px solid #f5f5f5"},
+  cTotal:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 0",borderTop:"2px solid #e8f5e9",marginTop:6},
+  payBtn:{width:"100%",padding:13,background:"linear-gradient(135deg,"+G+",#43a047)",color:"#fff",border:"none",borderRadius:14,fontWeight:800,fontSize:15,cursor:"pointer",marginTop:10,fontFamily:"Poppins,sans-serif"},
+  waBtn:{width:"100%",padding:13,background:"#25D366",color:"#fff",border:"none",borderRadius:14,fontWeight:800,fontSize:15,cursor:"pointer",marginTop:8,fontFamily:"Poppins,sans-serif"},
+  qrBox:{width:130,height:130,border:"3px solid "+G,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",background:"#f9fbe7"},
+  qrInner:{fontSize:13,fontWeight:700,color:G,textAlign:"center",lineHeight:1.6},
+  upiApp:{background:"#f1f8e9",border:"1px solid #c8e6c9",borderRadius:8,padding:"5px 10px",fontSize:12,fontWeight:700,color:G},
+  successBox:{background:"#fff",borderRadius:24,padding:"40px 30px",textAlign:"center",animation:"pop .4s ease",margin:20},
+  successId:{background:"#f1f8e9",borderRadius:10,padding:"8px 20px",display:"inline-block",fontWeight:800,color:G,fontSize:16},
+};
+
+function App() {
   const [tab, setTab] = useState("home");
   const [messages, setMessages] = useState([
-    { role:"assistant", content:`Namaste! 🙏 ${STORE.name} mein swagat hai!\n${STORE.tagline}\n\nKaise madad karoon?` },
+    {role:"assistant",content:"Namaste! 🙏 Vaibhav Grocery mein swagat hai!\nTaaza • Sasta • Bharosemand\n\nKaise madad karoon?"},
   ]);
-  const [input, setInput]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [cat, setCat]           = useState("All");
-  const [cart, setCart]         = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [cat, setCat] = useState("All");
+  const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
-  const [payOpen, setPayOpen]   = useState(false);
-  const [success, setSuccess]   = useState(false);
-  const [newOrderId]            = useState("#VG-" + Math.floor(1000+Math.random()*9000));
+  const [payOpen, setPayOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const newOrderId = "#VG-" + Math.floor(1000+Math.random()*9000);
   const bottomRef = useRef(null);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, loading]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [messages, loading]);
 
-  const total  = cart.reduce((s,i) => s + i.price*i.qty, 0);
-  const count  = cart.reduce((s,i) => s + i.qty, 0);
-  const grand  = total >= 400 ? total : total + 30;
+  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const count = cart.reduce((s,i)=>s+i.qty,0);
+  const grand = total>=400 ? total : total+30;
 
   function addItem(p) {
-    setCart(c => {
-      const ex = c.find(i=>i.id===p.id);
-      return ex ? c.map(i=>i.id===p.id?{...i,qty:i.qty+1}:i) : [...c,{...p,qty:1}];
+    setCart(c=>{
+      const ex=c.find(i=>i.id===p.id);
+      return ex?c.map(i=>i.id===p.id?{...i,qty:i.qty+1}:i):[...c,{...p,qty:1}];
     });
   }
   function remItem(id) {
-    setCart(c => {
-      const ex = c.find(i=>i.id===id);
-      return ex?.qty===1 ? c.filter(i=>i.id!==id) : c.map(i=>i.id===id?{...i,qty:i.qty-1}:i);
+    setCart(c=>{
+      const ex=c.find(i=>i.id===id);
+      return ex?.qty===1?c.filter(i=>i.id!==id):c.map(i=>i.id===id?{...i,qty:i.qty-1}:i);
     });
   }
   function placeOrder() {
     setSuccess(true);
-    setTimeout(() => { setSuccess(false); setPayOpen(false); setCartOpen(false); setCart([]); }, 3200);
+    setTimeout(()=>{setSuccess(false);setPayOpen(false);setCartOpen(false);setCart([]);},3200);
   }
 
   async function sendMsg(text) {
-    const msg = text || input.trim();
-    if (!msg || loading) return;
+    const msg = text||input.trim();
+    if(!msg||loading) return;
     setInput("");
-    const next = [...messages, { role:"user", content:msg }];
+    const next=[...messages,{role:"user",content:msg}];
     setMessages(next);
     setLoading(true);
     try {
-      const res  = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("https://api.anthropic.com/v1/messages",{
         method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
           model:"claude-sonnet-4-20250514",
           max_tokens:1000,
-          system: SYSTEM_PROMPT,
-          messages: next.map(m=>({ role:m.role, content:m.content })),
+          system:SYSTEM_PROMPT,
+          messages:next.map(m=>({role:m.role,content:m.content})),
         }),
       });
       const data = await res.json();
-      const reply = data.content?.map(b=>b.text||"").join("") || "Kuch problem aayi. Dobara try karein.";
-      setMessages(p => [...p, { role:"assistant", content:reply }]);
+      const reply = data.content?.map(b=>b.text||"").join("")||"Kuch problem aayi. Dobara try karein.";
+      setMessages(p=>[...p,{role:"assistant",content:reply}]);
     } catch {
-      setMessages(p => [...p, { role:"assistant", content:"Network error. Please retry! 🙏" }]);
+      setMessages(p=>[...p,{role:"assistant",content:"Network error. Please retry! 🙏"}]);
     } finally { setLoading(false); }
   }
 
-  const filtered = cat==="All" ? PRODUCTS : PRODUCTS.filter(p=>p.category===cat);
+  const filtered = cat==="All"?PRODUCTS:PRODUCTS.filter(p=>p.category===cat);
 
   return (
     <div style={S.root}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Baloo+2:wght@700;800&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
-        ::-webkit-scrollbar{display:none;}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-        @keyframes pop{0%{transform:scale(0.75);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
-        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-      `}</style>
-
       <div style={S.phone}>
-        {/* ── Header ── */}
+        {/* Header */}
         <div style={S.header}>
           <div>
-            <div style={S.storeName}>🛒 {STORE.name}</div>
-            <div style={S.tagline}>{STORE.tagline}</div>
+            <div style={S.storeName}>🛒 Vaibhav Grocery</div>
+            <div style={S.tagline}>Taaza • Sasta • Bharosemand</div>
           </div>
           <div style={S.cartWrap} onClick={()=>setCartOpen(true)}>
             <span style={{fontSize:26}}>🛍️</span>
-            {count>0 && <span style={S.badge}>{count}</span>}
+            {count>0&&<span style={S.badge}>{count}</span>}
           </div>
         </div>
 
-        {/* ── Content ── */}
+        {/* Content */}
         <div style={S.content}>
 
           {/* HOME */}
-          {tab==="home" && (
+          {tab==="home"&&(
             <div style={S.scroll}>
               <div style={S.banner}>
                 <div>
@@ -158,26 +240,24 @@ export default function VaibhavGrocery() {
                 </div>
                 <span style={{fontSize:40}}>🚴</span>
               </div>
-
               <div style={S.catRow}>
                 {CATEGORIES.map(c=>(
                   <button key={c} style={{...S.catBtn,...(cat===c?S.catOn:{})}} onClick={()=>setCat(c)}>{c}</button>
                 ))}
               </div>
-
               <div style={S.grid}>
                 {filtered.map(p=>{
-                  const inCart = cart.find(i=>i.id===p.id);
-                  return (
+                  const inCart=cart.find(i=>i.id===p.id);
+                  return(
                     <div key={p.id} style={S.card}>
                       <div style={{fontSize:32,marginBottom:4}}>{p.emoji}</div>
                       <div style={S.cardName}>{p.name}</div>
                       <div style={S.cardPrice}>₹{p.price}</div>
                       {!p.stock
-                        ? <div style={S.oos}>Out of Stock</div>
-                        : inCart
-                          ? <div style={S.qRow}><button style={S.qBtn} onClick={()=>remItem(p.id)}>−</button><span style={S.qNum}>{inCart.qty}</span><button style={S.qBtn} onClick={()=>addItem(p)}>+</button></div>
-                          : <button style={S.addBtn} onClick={()=>addItem(p)}>+ Add</button>
+                        ?<div style={S.oos}>Out of Stock</div>
+                        :inCart
+                          ?<div style={S.qRow}><button style={S.qBtn} onClick={()=>remItem(p.id)}>−</button><span style={S.qNum}>{inCart.qty}</span><button style={S.qBtn} onClick={()=>addItem(p)}>+</button></div>
+                          :<button style={S.addBtn} onClick={()=>addItem(p)}>+ Add</button>
                       }
                     </div>
                   );
@@ -187,12 +267,12 @@ export default function VaibhavGrocery() {
           )}
 
           {/* ORDERS */}
-          {tab==="orders" && (
+          {tab==="orders"&&(
             <div style={S.scroll}>
               <div style={S.secTitle}>📦 Aapke Orders</div>
               {ORDERS.map((o,i)=>{
-                const st = STATUS[o.status];
-                return (
+                const st=STATUS[o.status];
+                return(
                   <div key={i} style={S.oCard}>
                     <div style={S.oTop}>
                       <span style={S.oId}>{o.id}</span>
@@ -210,21 +290,21 @@ export default function VaibhavGrocery() {
           )}
 
           {/* CHAT */}
-          {tab==="chat" && (
+          {tab==="chat"&&(
             <>
               <div style={S.msgs}>
                 {messages.map((m,i)=>(
                   <div key={i} style={{...S.mRow,justifyContent:m.role==="user"?"flex-end":"flex-start",animation:"fadeUp .2s ease"}}>
-                    {m.role==="assistant" && <div style={S.botAv}>🛒</div>}
+                    {m.role==="assistant"&&<div style={S.botAv}>🛒</div>}
                     <div style={{...S.bubble,...(m.role==="user"?S.uBub:S.bBub)}}>{m.content}</div>
                   </div>
                 ))}
-                {loading && (
+                {loading&&(
                   <div style={{...S.mRow,justifyContent:"flex-start"}}>
                     <div style={S.botAv}>🛒</div>
                     <div style={{...S.bubble,...S.bBub,display:"flex",gap:5,alignItems:"center"}}>
                       {[0,.2,.4].map((d,i)=>(
-                        <span key={i} style={{width:7,height:7,borderRadius:"50%",background:"#43a047",display:"inline-block",animation:`bounce 1s ${d}s infinite`}}/>
+                        <span key={i} style={{width:7,height:7,borderRadius:"50%",background:"#43a047",display:"inline-block",animation:"bounce 1s "+d+"s infinite"}}/>
                       ))}
                     </div>
                   </div>
@@ -245,7 +325,7 @@ export default function VaibhavGrocery() {
           )}
 
           {/* OFFERS */}
-          {tab==="offers" && (
+          {tab==="offers"&&(
             <div style={S.scroll}>
               <div style={S.secTitle}>🏷️ Aaj ke Offers</div>
               {[
@@ -270,128 +350,11 @@ export default function VaibhavGrocery() {
           )}
         </div>
 
-        {/* ── Bottom Nav ── */}
+        {/* Bottom Nav */}
         <div style={S.nav}>
           {[
             {id:"home",icon:"🏠",label:"Home"},
             {id:"orders",icon:"📦",label:"Orders"},
             {id:"chat",icon:"💬",label:"Help"},
             {id:"offers",icon:"🏷️",label:"Offers"},
-          ].map(n=>(
-            <button key={n.id} style={{...S.navBtn,...(tab===n.id?S.navOn:{})}} onClick={()=>setTab(n.id)}>
-              <span style={{fontSize:20}}>{n.icon}</span>
-              <span style={{fontSize:10,fontWeight:600,color:tab===n.id?"#2e7d32":"#aaa"}}>{n.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── CART DRAWER ── */}
-      {cartOpen && (
-        <div style={S.overlay} onClick={()=>setCartOpen(false)}>
-          <div style={{...S.drawer,animation:"slideUp .3s ease"}} onClick={e=>e.stopPropagation()}>
-            <div style={S.dHead}>
-              <span style={S.dTitle}>🛍️ Cart</span>
-              <button style={S.closeBtn} onClick={()=>setCartOpen(false)}>✕</button>
-            </div>
-            {cart.length===0
-              ? <div style={S.emptyCart}>Cart khali hai 😕<br/>Kuch add karein!</div>
-              : <>
-                  {cart.map(item=>(
-                    <div key={item.id} style={S.cItem}>
-                      <span style={{fontSize:22,width:32}}>{item.emoji}</span>
-                      <div style={{flex:1}}>
-                        <div style={{fontWeight:600,fontSize:13,color:"#333"}}>{item.name}</div>
-                        <div style={{fontSize:12,color:"#777",marginTop:2}}>₹{item.price} × {item.qty} = ₹{item.price*item.qty}</div>
-                      </div>
-                      <div style={S.qRow}>
-                        <button style={S.qBtn} onClick={()=>remItem(item.id)}>−</button>
-                        <span style={S.qNum}>{item.qty}</span>
-                        <button style={S.qBtn} onClick={()=>addItem(item)}>+</button>
-                      </div>
-                    </div>
-                  ))}
-                  <div style={S.cTotal}>
-                    <span style={{fontSize:13,color:"#666"}}>Delivery: {total>=400?<span style={{color:"#2e7d32",fontWeight:700}}>FREE 🎉</span>:"₹30"}</span>
-                    <span style={{fontWeight:800,fontSize:17,color:"#1b5e20"}}>Total: ₹{grand}</span>
-                  </div>
-                  <button style={S.payBtn} onClick={()=>{setCartOpen(false);setPayOpen(true);}}>💳 Payment Karein</button>
-                  <button style={S.waBtn}
-                    onClick={()=>window.open(`https://wa.me/${STORE.whatsapp}?text=Namaste! ${STORE.name} se order:%0A${cart.map(i=>`${i.name} x${i.qty}`).join(", ")}%0ATotal: Rs.${grand}`)}>
-                    📲 WhatsApp pe Order
-                  </button>
-                </>
-            }
-          </div>
-        </div>
-      )}
-
-      {/* ── PAYMENT MODAL ── */}
-      {payOpen && !success && (
-        <div style={S.overlay} onClick={()=>setPayOpen(false)}>
-          <div style={{...S.drawer,animation:"slideUp .3s ease",textAlign:"center"}} onClick={e=>e.stopPropagation()}>
-            <div style={S.dHead}>
-              <span style={S.dTitle}>💳 Payment</span>
-              <button style={S.closeBtn} onClick={()=>setPayOpen(false)}>✕</button>
-            </div>
-            <div style={{fontWeight:700,fontSize:14,color:"#333",marginBottom:12}}>UPI se Pay Karein</div>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:12}}>
-              <div style={S.qrBox}>
-                <div style={S.qrInner}>QR<br/>Code</div>
-              </div>
-            </div>
-            <div style={{fontSize:13,color:"#555",marginBottom:4}}>UPI ID: <strong>{STORE.upiId}</strong></div>
-            <div style={{fontSize:30,fontWeight:800,color:"#2e7d32",marginBottom:14}}>₹{grand}</div>
-            <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:16}}>
-              {["GPay","PhonePe","Paytm","BHIM"].map(a=>(
-                <div key={a} style={S.upiApp}>{a}</div>
-              ))}
-            </div>
-            <button style={S.payBtn} onClick={placeOrder}>✅ Payment Ho Gayi — Confirm</button>
-          </div>
-        </div>
-      )}
-
-      {/* ── SUCCESS ── */}
-      {success && (
-        <div style={{...S.overlay,alignItems:"center",justifyContent:"center"}}>
-          <div style={S.successBox}>
-            <div style={{fontSize:60,marginBottom:12}}>🎉</div>
-            <div style={{fontWeight:800,fontSize:20,color:"#1b5e20",marginBottom:6}}>Order Place Ho Gaya!</div>
-            <div style={{color:"#666",fontSize:14,marginBottom:14}}>2-4 ghante mein delivery hogi</div>
-            <div style={S.successId}>{newOrderId}</div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-const G = "#2e7d32";
-const S = {
-  root:     { minHeight:"100vh", background:"linear-gradient(135deg,#f1f8e9,#e8f5e9,#e0f2f1)", display:"flex", alignItems:"center", justifyContent:"center", padding:16 },
-  phone:    { width:"100%", maxWidth:420, height:"90vh", maxHeight:800, background:"#fff", borderRadius:30, boxShadow:"0 30px 80px rgba(0,0,0,0.17)", display:"flex", flexDirection:"column", overflow:"hidden" },
-  header:   { background:"linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c)", padding:"14px 18px", display:"flex", justifyContent:"space-between", alignItems:"center" },
-  storeName:{ fontFamily:"'Baloo 2',sans-serif", fontSize:20, fontWeight:800, color:"#fff" },
-  tagline:  { fontSize:11, color:"rgba(255,255,255,0.8)", marginTop:1 },
-  cartWrap: { position:"relative", cursor:"pointer" },
-  badge:    { position:"absolute", top:-4, right:-4, background:"#ff5722", color:"#fff", borderRadius:"50%", width:18, height:18, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700 },
-  content:  { flex:1, display:"flex", flexDirection:"column", overflow:"hidden" },
-  scroll:   { flex:1, overflowY:"auto", padding:"12px 12px 0" },
-  banner:   { background:"linear-gradient(135deg,#43a047,#66bb6a)", borderRadius:16, padding:"16px 20px", marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"center" },
-  bannerTitle:{ color:"#fff", fontWeight:800, fontSize:15 },
-  bannerSub:  { color:"rgba(255,255,255,0.85)", fontSize:11.5, marginTop:3 },
-  catRow:   { display:"flex", gap:7, overflowX:"auto", marginBottom:12, paddingBottom:4 },
-  catBtn:   { flexShrink:0, padding:"6px 13px", borderRadius:20, border:`1.5px solid #c8e6c9`, background:"#fff", fontSize:12, fontWeight:600, color:"#555", cursor:"pointer" },
-  catOn:    { background:G, color:"#fff", border:`1.5px solid ${G}` },
-  grid:     { display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, paddingBottom:16 },
-  card:     { background:"#fafffe", border:"1px solid #e8f5e9", borderRadius:14, padding:12, display:"flex", flexDirection:"column", alignItems:"center", gap:5 },
-  cardName: { fontSize:12, fontWeight:600, color:"#333", textAlign:"center" },
-  cardPrice:{ fontSize:15, fontWeight:800, color:G },
-  addBtn:   { background:G, color:"#fff", border:"none", borderRadius:8, padding:"5px 15px", fontSize:12, fontWeight:700, cursor:"pointer" },
-  oos:      { fontSize:11, color:"#bbb", fontStyle:"italic" },
-  qRow:     { display:"flex", alignItems:"center", gap:8 },
-  qBtn:     { width:26, height:26, borderRadius:8, border:"1.5px solid #c8e6c9", background:"#f1f8e9", fontWeight:800, fontSize:14, cursor:"pointer", color:G },
-  qNum:     { fontWeight:800, color:"#1b5e20", minWidth:16, textAlign:"center" },
-  secTitle: { fontWeight:800, fontSize:16, color:"#1b5e20", marginBottom:12 },
-  oCa
+          ].map(n=
