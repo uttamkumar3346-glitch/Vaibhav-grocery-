@@ -188,7 +188,7 @@ body{background:#f1f8e9;min-height:100vh;}
     <div class="d-head"><span class="d-title">💳 Payment</span><button class="close-btn" onclick="closePayment()">✕</button></div>
     <div style="font-weight:700;font-size:14px;color:#333;margin-bottom:12px">UPI se Pay Karein</div>
     <div class="qr-box"><div style="font-size:13px;font-weight:700;color:#2e7d32;line-height:1.6">QR<br>Code</div></div>
-    <div style="font-size:13px;color:#555;margin-bottom:4px">UPI ID: <strong>vaibhavgrocery@upi</strong></div>
+    <div style="font-size:13px;color:#555;margin-bottom:4px">UPI ID: <strong>6200069087@ybl</strong></div>
     <div style="font-size:30px;font-weight:800;color:#2e7d32;margin-bottom:14px" id="payAmount">₹0</div>
     <div class="upi-apps"><div class="upi-app">GPay</div><div class="upi-app">PhonePe</div><div class="upi-app">Paytm</div><div class="upi-app">BHIM</div></div>
     <button class="pay-btn" onclick="placeOrder()">✅ Payment Ho Gayi — Confirm</button>
@@ -338,68 +338,4 @@ function renderOrders(){
   }).join("");
 }
 
-function renderOffers(){
-  document.getElementById("offersList").innerHTML=OFFERS.map(o=>`
-    <div class="of-card">
-      <span class="of-emoji">${o.e}</span>
-      <div style="flex:1"><div class="of-title">${o.title}</div><div class="of-desc">${o.desc}</div>
-      <div class="of-row"><span class="of-code">${o.code}</span><span class="of-exp">${o.exp}</span></div></div>
-    </div>`).join("");
-}
-
-function initChat(){
-  if(chatLoaded) return; chatLoaded=true;
-  document.getElementById("quickRow").innerHTML=QUICK.map(q=>`<button class="quick-btn" onclick="sendMsg('${q.text}')">${q.label}</button>`).join("");
-  renderMsgs();
-}
-
-function renderMsgs(){
-  const el=document.getElementById("msgs");
-  el.innerHTML=chatHistory.map(m=>`
-    <div class="m-row" style="justify-content:${m.role==="user"?"flex-end":"flex-start"}">
-      ${m.role==="assistant"?'<div class="bot-av">🛒</div>':""}
-      <div class="bubble ${m.role==="user"?"u-bub":"b-bub"}" style="${m.role==="user"?"margin-left:auto":""}">${m.content.replace(/\n/g,"<br>")}</div>
-    </div>`).join("");
-  el.scrollTop=el.scrollHeight;
-}
-
-async function sendMsg(txt){
-  const inp=document.getElementById("chatInput");
-  const msg=txt||inp.value.trim();
-  if(!msg) return;
-  inp.value="";
-  chatHistory.push({role:"user",content:msg});
-  renderMsgs();
-  // Show typing
-  const el=document.getElementById("msgs");
-  const typing=document.createElement("div");
-  typing.className="m-row"; typing.id="typing";
-  typing.innerHTML=`<div class="bot-av">🛒</div><div class="bubble b-bub" style="display:flex;gap:5px;align-items:center">${[0,.2,.4].map(d=>`<span class="dot" style="animation:bounce 1s ${d}s infinite"></span>`).join("")}</div>`;
-  el.appendChild(typing); el.scrollTop=el.scrollHeight;
-  try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYSTEM,messages:chatHistory.map(m=>({role:m.role,content:m.content}))})
-    });
-    const data=await res.json();
-    const reply=data.content?.map(b=>b.text||"").join("")||"Kuch problem aayi. Dobara try karein.";
-    chatHistory.push({role:"assistant",content:reply});
-  }catch{ chatHistory.push({role:"assistant",content:"Network error. Please retry! 🙏"}); }
-  document.getElementById("typing")?.remove();
-  renderMsgs();
-}
-
-function switchTab(name, btn){
-  document.querySelectorAll(".tab,.chat-tab").forEach(t=>t.classList.remove("active"));
-  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
-  const t=document.getElementById("tab-"+name);
-  t.classList.add("active");
-  btn.classList.add("active");
-  if(name==="chat") initChat();
-}
-
-// Init
-renderCats(); renderProducts(); renderOrders(); renderOffers();
-</script>
-</body>
-</html>
+fu
