@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#2e7d32"/>
+<title>Vaibhav Grocery</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+body{background:#f1f8e9;min-height:100vh;}
+::-webkit-scrollbar{display:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes pop{0%{transform:scale(0.75);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+.app{max-width:430px;margin:0 auto;background:#fff;min-height:100vh;display:flex;flex-direction:column;position:relative;}
+
+/* Header */
+.header{background:linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;}
+.store-name{font-size:20px;font-weight:800;color:#fff;}
+.tagline{font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px;}
+.cart-wrap{position:relative;cursor:pointer;font-size:26px;}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:#ff5722;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;display:none;}
+
+/* Content */
+.content{flex:1;overflow-y:auto;padding-bottom:70px;}
+
+/* Banner */
+.banner{background:linear-gradient(135deg,#43a047,#66bb6a);margin:12px;border-radius:16px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+.banner-title{color:#fff;font-weight:800;font-size:15px;}
+.banner-sub{color:rgba(255,255,255,0.85);font-size:11.5px;margin-top:3px;}
+
+/* Categories */
+.cat-row{display:flex;gap:7px;overflow-x:auto;padding:0 12px 8px;scrollbar-width:none;}
+.cat-btn{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid #c8e6c9;background:#fff;font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:.2s;}
+.cat-btn.active{background:#2e7d32;color:#fff;border-color:#2e7d32;}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 12px 16px;}
+.card{background:#fafffe;border:1px solid #e8f5e9;border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+.card-emoji{font-size:32px;margin-bottom:2px;}
+.card-name{font-size:12px;font-weight:600;color:#333;}
+.card-price{font-size:15px;font-weight:800;color:#2e7d32;}
+.add-btn{background:#2e7d32;color:#fff;border:none;border-radius:8px;padding:5px 15px;font-size:12px;font-weight:700;cursor:pointer;font-family:Poppins;}
+.oos{font-size:11px;color:#bbb;font-style:italic;}
+.q-row{display:flex;align-items:center;gap:8px;}
+.q-btn{width:26px;height:26px;border-radius:8px;border:1.5px solid #c8e6c9;background:#f1f8e9;font-weight:800;font-size:14px;cursor:pointer;color:#2e7d32;font-family:Poppins;}
+.q-num{font-weight:800;color:#1b5e20;min-width:16px;text-align:center;}
+
+/* Orders */
+.sec-title{font-weight:800;font-size:16px;color:#1b5e20;margin:12px 12px 10px;}
+.o-card{background:#fafffe;border:1px solid #e8f5e9;border-radius:14px;padding:14px;margin:0 12px 10px;}
+.o-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+.o-id{font-weight:800;color:#2e7d32;font-size:14px;}
+.st-tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px;}
+.o-items{font-size:13px;color:#555;margin-bottom:8px;}
+.o-bot{display:flex;justify-content:space-between;align-items:center;}
+.o-amt{font-weight:800;color:#1b5e20;font-size:14px;}
+
+/* Chat */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 130px);}
+.msgs{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:10px;}
+.m-row{display:flex;align-items:flex-end;gap:7px;}
+.bot-av{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#2e7d32,#66bb6a);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.bubble{max-width:72%;padding:10px 13px;border-radius:17px;font-size:13.5px;line-height:1.55;font-weight:500;}
+.b-bub{background:#f1f8e9;color:#1b5e20;border-bottom-left-radius:4px;}
+.u-bub{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border-bottom-right-radius:4px;margin-left:auto;}
+.quick-row{display:flex;gap:7px;overflow-x:auto;padding:7px 12px;scrollbar-width:none;}
+.quick-btn{flex-shrink:0;padding:7px 12px;border:1.5px solid #c8e6c9;border-radius:20px;background:#fff;font-size:12px;font-weight:700;color:#2e7d32;cursor:pointer;white-space:nowrap;font-family:Poppins;}
+.input-bar{display:flex;padding:8px 12px 12px;gap:8px;border-top:1px solid #f0f0f0;}
+.inp{flex:1;padding:11px 14px;border-radius:22px;border:1.5px solid #e0e0e0;font-size:13.5px;outline:none;background:#fafafa;font-weight:500;color:#333;font-family:Poppins;}
+.send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#2e7d32,#43a047);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(46,125,50,0.4);}
+.dot{width:7px;height:7px;border-radius:50%;background:#43a047;display:inline-block;}
+
+/* Offers */
+.of-card{background:linear-gradient(135deg,#f1f8e9,#f9fbe7);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:center;border:1px solid #c8e6c9;margin:0 12px 10px;}
+.of-emoji{font-size:32px;flex-shrink:0;}
+.of-title{font-weight:800;color:#2e7d32;font-size:15px;margin-bottom:3px;}
+.of-desc{font-size:12.5px;color:#555;}
+.of-row{display:flex;justify-content:space-between;align-items:center;margin-top:7px;}
+.of-code{background:#2e7d32;color:#fff;padding:3px 10px;border-radius:8px;font-size:12px;font-weight:800;letter-spacing:1px;}
+.of-exp{font-size:11px;color:#999;}
+
+/* Nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #f0f0f0;padding:8px 0 10px;z-index:10;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;cursor:pointer;padding:4px 0;font-family:Poppins;}
+.nav-icon{font-size:20px;}
+.nav-label{font-size:10px;font-weight:600;color:#aaa;}
+.nav-btn.active .nav-label{color:#2e7d32;}
+
+/* Overlay */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:flex-end;justify-content:center;z-index:100;display:none;}
+.overlay.show{display:flex;}
+.drawer{width:100%;max-width:430px;background:#fff;border-radius:24px 24px 0 0;padding:20px 16px 32px;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
+.d-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.d-title{font-weight:800;font-size:17px;color:#1b5e20;}
+.close-btn{background:#f5f5f5;border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;font-weight:700;font-family:Poppins;}
+.empty-cart{text-align:center;color:#999;padding:30px 0;font-size:15px;line-height:2;}
+.c-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5;}
+.c-name{font-weight:600;font-size:13px;color:#333;}
+.c-sub{font-size:12px;color:#777;margin-top:2px;}
+.c-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:2px solid #e8f5e9;margin-top:6px;}
+.pay-btn{width:100%;padding:13px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;margin-top:10px;font-family:Poppins;}
+.wa-btn{width:100%;padding:13px;background:#25D366;color:#fff;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;margin-top:8px;font-family:Poppins;}
+.upi-apps{display:flex;justify-content:center;gap:8px;margin-bottom:16px;}
+.upi-app{background:#f1f8e9;border:1px solid #c8e6c9;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:#2e7d32;}
+.qr-box{width:130px;height:130px;border:3px solid #2e7d32;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#f9fbe7;margin:0 auto 12px;}
+.success-box{background:#fff;border-radius:24px;padding:40px 30px;text-align:center;animation:pop .4s ease;margin:20px;}
+.success-id{background:#f1f8e9;border-radius:10px;padding:8px 20px;display:inline-block;font-weight:800;color:#2e7d32;font-size:16px;}
+.tab{display:none;} .tab.active{display:block;}
+.chat-tab{display:none;flex-direction:column;} .chat-tab.active{display:flex;}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="store-name">🛒 Vaibhav Grocery</div>
+      <div class="tagline">Taaza • Sasta • Bharosemand</div>
+    </div>
+    <div class="cart-wrap" onclick="openCart()">
+      <span>🛍️</span>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- HOME TAB -->
+    <div class="tab active" id="tab-home">
+      <div class="banner">
+        <div>
+          <div class="banner-title">Ghar Baithe Order Karein!</div>
+          <div class="banner-sub">Free delivery above ₹400 🎉</div>
+        </div>
+        <span style="font-size:40px">🚴</span>
+      </div>
+      <div class="cat-row" id="catRow"></div>
+      <div class="grid" id="productGrid"></div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div class="tab" id="tab-orders">
+      <div class="sec-title">📦 Aapke Orders</div>
+      <div id="ordersList"></div>
+    </div>
+
+    <!-- CHAT TAB -->
+    <div class="chat-tab" id="tab-chat" style="height:calc(100vh - 130px)">
+      <div class="msgs" id="msgs"></div>
+      <div class="quick-row" id="quickRow"></div>
+      <div class="input-bar">
+        <input class="inp" id="chatInput" placeholder="Message likhein..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="send-btn" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+
+    <!-- OFFERS TAB -->
+    <div class="tab" id="tab-offers">
+      <div class="sec-title">🏷️ Aaj ke Offers</div>
+      <div id="offersList"></div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchTab('home',this)"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-btn" onclick="switchTab('orders',this)"><span class="nav-icon">📦</span><span class="nav-label">Orders</span></button>
+    <button class="nav-btn" onclick="switchTab('chat',this)"><span class="nav-icon">💬</span><span class="nav-label">Help</span></button>
+    <button class="nav-btn" onclick="switchTab('offers',this)"><span class="nav-icon">🏷️</span><span class="nav-label">Offers</span></button>
+  </div>
+</div>
+
+<!-- Cart Overlay -->
+<div class="overlay" id="cartOverlay" onclick="closeCart()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="d-head"><span class="d-title">🛍️ Cart</span><button class="close-btn" onclick="closeCart()">✕</button></div>
+    <div id="cartItems"></div>
+  </div>
+</div>
+
+<!-- Payment Overlay -->
+<div class="overlay" id="payOverlay" onclick="closePayment()">
+  <div class="drawer" style="text-align:center" onclick="event.stopPropagation()">
+    <div class="d-head"><span class="d-title">💳 Payment</span><button class="close-btn" onclick="closePayment()">✕</button></div>
+    <div style="font-weight:700;font-size:14px;color:#333;margin-bottom:12px">UPI se Pay Karein</div>
+    <div class="qr-box"><div style="font-size:13px;font-weight:700;color:#2e7d32;line-height:1.6">QR<br>Code</div></div>
+    <div style="font-size:13px;color:#555;margin-bottom:4px">UPI ID: <strong>vaibhavgrocery@upi</strong></div>
+    <div style="font-size:30px;font-weight:800;color:#2e7d32;margin-bottom:14px" id="payAmount">₹0</div>
+    <div class="upi-apps"><div class="upi-app">GPay</div><div class="upi-app">PhonePe</div><div class="upi-app">Paytm</div><div class="upi-app">BHIM</div></div>
+    <button class="pay-btn" onclick="placeOrder()">✅ Payment Ho Gayi — Confirm</button>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="overlay" id="successOverlay" style="align-items:center;justify-content:center">
+  <div class="success-box">
+    <div style="font-size:60px;margin-bottom:12px">🎉</div>
+    <div style="font-weight:800;font-size:20px;color:#1b5e20;margin-bottom:6px">Order Place Ho Gaya!</div>
+    <div style="color:#666;font-size:14px;margin-bottom:14px">2-4 ghante mein delivery hogi</div>
+    <div class="success-id" id="successId">#VG-0000</div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  {id:1,name:"Amul Milk 1L",price:62,cat:"Dairy",e:"🥛",stock:true},
+  {id:2,name:"Amul Butter 500g",price:280,cat:"Dairy",e:"🧈",stock:true},
+  {id:3,name:"Amul Paneer 200g",price:95,cat:"Dairy",e:"🧀",stock:true},
+  {id:4,name:"Basmati Rice 5kg",price:420,cat:"Grains",e:"🌾",stock:true},
+  {id:5,name:"Aashirvaad Atta 10kg",price:380,cat:"Grains",e:"🫓",stock:true},
+  {id:6,name:"Toor Dal 1kg",price:145,cat:"Grains",e:"🫘",stock:false},
+  {id:7,name:"Tomato 1kg",price:40,cat:"Veggies",e:"🍅",stock:true},
+  {id:8,name:"Onion 1kg",price:35,cat:"Veggies",e:"🧅",stock:true},
+  {id:9,name:"Potato 1kg",price:30,cat:"Veggies",e:"🥔",stock:true},
+  {id:10,name:"Surf Excel 1kg",price:220,cat:"Home",e:"🧺",stock:true},
+  {id:11,name:"Colgate 200g",price:95,cat:"Home",e:"🪥",stock:true},
+  {id:12,name:"Lays Classic",price:20,cat:"Snacks",e:"🍟",stock:true},
+  {id:13,name:"Britannia Marie",price:30,cat:"Snacks",e:"🍪",stock:true},
+  {id:14,name:"Maggi 4pk",price:72,cat:"Snacks",e:"🍜",stock:true},
+];
+const CATS = ["All","Dairy","Grains","Veggies","Home","Snacks"];
+const ORDERS = [
+  {id:"#VG-1042",status:"delivered",items:"Milk x2, Bread, Eggs",amount:180,time:"Delivered 6:30 PM"},
+  {id:"#VG-1041",status:"out",items:"Rice 5kg, Atta 10kg",amount:800,time:"Delivery by 5 PM"},
+  {id:"#VG-1039",status:"cancelled",items:"Dal 1kg, Butter",amount:425,time:"Cancelled"},
+];
+const STATUS = {
+  delivered:{bg:"#e8f5e9",color:"#2e7d32",label:"Delivered ✅"},
+  out:{bg:"#fff8e1",color:"#f57f17",label:"Out for Delivery 🚴"},
+  cancelled:{bg:"#fce4ec",color:"#c62828",label:"Cancelled ❌"},
+};
+const QUICK = [
+  {label:"🛒 Order Track",text:"Mera order kahan hai?"},
+  {label:"↩️ Return",text:"Product return karna hai"},
+  {label:"🕐 Timing",text:"Store ki timing kya hai?"},
+  {label:"🏷️ Offers",text:"Koi discount hai?"},
+  {label:"📦 Delivery",text:"Delivery charge kitna hai?"},
+];
+const OFFERS = [
+  {e:"🥛",title:"Dairy Deal",desc:"Sabhi dairy pe 10% off",code:"DAIRY10",exp:"8 June tak"},
+  {e:"🌾",title:"Grain Saver",desc:"Rice/Atta 5kg+ pe ₹40 cashback",code:"GRAIN40",exp:"10 June tak"},
+  {e:"🚴",title:"Free Delivery",desc:"₹400+ order pe free delivery",code:"AUTO",exp:"Hamesha"},
+  {e:"🎁",title:"Pehli Baar",desc:"Pehle order pe ₹50 off",code:"NEW50",exp:"New users"},
+];
+const SYSTEM = `Aap Vaibhav Grocery ke friendly customer service agent hain. Sirf Hinglish mein baat karo. Store timing: 7AM-10PM (Mon-Sat), 8AM-9PM (Sunday). Delivery: Rs.30, free above Rs.400. Return: 2 din ke andar. UPI: vaibhavgrocery@upi. 2-3 lines mein jawab do.`;
+
+let cart = [], curCat = "All", chatHistory = [{role:"assistant",content:"Namaste! 🙏 Vaibhav Grocery mein swagat hai!\nTaaza • Sasta • Bharosemand\n\nKaise madad karoon?"}];
+let chatLoaded = false;
+
+function calcTotal(){ return cart.reduce((s,i)=>s+i.price*i.qty,0); }
+function calcGrand(){ const t=calcTotal(); return t>=400?t:t+30; }
+function countItems(){ return cart.reduce((s,i)=>s+i.qty,0); }
+
+function updateBadge(){
+  const b=document.getElementById("cartBadge");
+  const n=countItems();
+  b.textContent=n; b.style.display=n>0?"flex":"none";
+}
+
+function renderCats(){
+  const el=document.getElementById("catRow");
+  el.innerHTML=CATS.map(c=>`<button class="cat-btn${c===curCat?" active":""}" onclick="setCat('${c}')">${c}</button>`).join("");
+}
+
+function setCat(c){ curCat=c; renderCats(); renderProducts(); }
+
+function renderProducts(){
+  const list=curCat==="All"?PRODUCTS:PRODUCTS.filter(p=>p.cat===curCat);
+  document.getElementById("productGrid").innerHTML=list.map(p=>{
+    const inCart=cart.find(i=>i.id===p.id);
+    return `<div class="card">
+      <div class="card-emoji">${p.e}</div>
+      <div class="card-name">${p.name}</div>
+      <div class="card-price">₹${p.price}</div>
+      ${!p.stock?'<div class="oos">Out of Stock</div>':inCart?`<div class="q-row"><button class="q-btn" onclick="remItem(${p.id})">−</button><span class="q-num">${inCart.qty}</span><button class="q-btn" onclick="addItem(${p.id})">+</button></div>`:`<button class="add-btn" onclick="addItem(${p.id})">+ Add</button>`}
+    </div>`;
+  }).join("");
+}
+
+function addItem(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  const ex=cart.find(i=>i.id===id);
+  if(ex) ex.qty++; else cart.push({...p,qty:1});
+  updateBadge(); renderProducts(); if(document.getElementById("cartOverlay").classList.contains("show")) renderCartItems();
+}
+function remItem(id){
+  const ex=cart.find(i=>i.id===id);
+  if(!ex) return;
+  if(ex.qty===1) cart=cart.filter(i=>i.id!==id); else ex.qty--;
+  updateBadge(); renderProducts(); if(document.getElementById("cartOverlay").classList.contains("show")) renderCartItems();
+}
+
+function renderCartItems(){
+  const el=document.getElementById("cartItems");
+  if(cart.length===0){ el.innerHTML='<div class="empty-cart">Cart khali hai 😕<br>Kuch add karein!</div>'; return; }
+  const t=calcTotal(), g=calcGrand();
+  el.innerHTML=cart.map(i=>`<div class="c-item">
+    <span style="font-size:22px;width:32px">${i.e}</span>
+    <div style="flex:1"><div class="c-name">${i.name}</div><div class="c-sub">₹${i.price} × ${i.qty} = ₹${i.price*i.qty}</div></div>
+    <div class="q-row"><button class="q-btn" onclick="remItem(${i.id})">−</button><span class="q-num">${i.qty}</span><button class="q-btn" onclick="addItem(${i.id})">+</button></div>
+  </div>`).join("")+
+  `<div class="c-total"><span style="font-size:13px;color:#666">Delivery: ${t>=400?'<span style="color:#2e7d32;font-weight:700">FREE 🎉</span>':'₹30'}</span><span style="font-weight:800;font-size:17px;color:#1b5e20">Total: ₹${g}</span></div>
+  <button class="pay-btn" onclick="openPayment()">💳 Payment Karein</button>
+  <button class="wa-btn" onclick="waOrder()">📲 WhatsApp pe Order</button>`;
+}
+
+function waOrder(){
+  const txt=cart.map(i=>`${i.name} x${i.qty}`).join(", ");
+  window.open(`https://wa.me/919999999999?text=Namaste! Vaibhav Grocery se order:%0A${txt}%0ATotal: Rs.${calcGrand()}`);
+}
+
+function openCart(){ document.getElementById("cartOverlay").classList.add("show"); renderCartItems(); }
+function closeCart(){ document.getElementById("cartOverlay").classList.remove("show"); }
+function openPayment(){ closeCart(); document.getElementById("payAmount").textContent="₹"+calcGrand(); document.getElementById("payOverlay").classList.add("show"); }
+function closePayment(){ document.getElementById("payOverlay").classList.remove("show"); }
+
+function placeOrder(){
+  closePayment();
+  const oid="#VG-"+Math.floor(1000+Math.random()*9000);
+  document.getElementById("successId").textContent=oid;
+  document.getElementById("successOverlay").classList.add("show");
+  cart=[]; updateBadge(); renderProducts();
+  setTimeout(()=>{ document.getElementById("successOverlay").classList.remove("show"); },3500);
+}
+
+function renderOrders(){
+  document.getElementById("ordersList").innerHTML=ORDERS.map(o=>{
+    const st=STATUS[o.status];
+    return `<div class="o-card">
+      <div class="o-top"><span class="o-id">${o.id}</span><span class="st-tag" style="background:${st.bg};color:${st.color}">${st.label}</span></div>
+      <div class="o-items">${o.items}</div>
+      <div class="o-bot"><span style="font-size:11px;color:#999">${o.time}</span><span class="o-amt">₹${o.amount}</span></div>
+    </div>`;
+  }).join("");
+}
+
+function renderOffers(){
+  document.getElementById("offersList").innerHTML=OFFERS.map(o=>`
+    <div class="of-card">
+      <span class="of-emoji">${o.e}</span>
+      <div style="flex:1"><div class="of-title">${o.title}</div><div class="of-desc">${o.desc}</div>
+      <div class="of-row"><span class="of-code">${o.code}</span><span class="of-exp">${o.exp}</span></div></div>
+    </div>`).join("");
+}
+
+function initChat(){
+  if(chatLoaded) return; chatLoaded=true;
+  document.getElementById("quickRow").innerHTML=QUICK.map(q=>`<button class="quick-btn" onclick="sendMsg('${q.text}')">${q.label}</button>`).join("");
+  renderMsgs();
+}
+
+function renderMsgs(){
+  const el=document.getElementById("msgs");
+  el.innerHTML=chatHistory.map(m=>`
+    <div class="m-row" style="justify-content:${m.role==="user"?"flex-end":"flex-start"}">
+      ${m.role==="assistant"?'<div class="bot-av">🛒</div>':""}
+      <div class="bubble ${m.role==="user"?"u-bub":"b-bub"}" style="${m.role==="user"?"margin-left:auto":""}">${m.content.replace(/\n/g,"<br>")}</div>
+    </div>`).join("");
+  el.scrollTop=el.scrollHeight;
+}
+
+async function sendMsg(txt){
+  const inp=document.getElementById("chatInput");
+  const msg=txt||inp.value.trim();
+  if(!msg) return;
+  inp.value="";
+  chatHistory.push({role:"user",content:msg});
+  renderMsgs();
+  // Show typing
+  const el=document.getElementById("msgs");
+  const typing=document.createElement("div");
+  typing.className="m-row"; typing.id="typing";
+  typing.innerHTML=`<div class="bot-av">🛒</div><div class="bubble b-bub" style="display:flex;gap:5px;align-items:center">${[0,.2,.4].map(d=>`<span class="dot" style="animation:bounce 1s ${d}s infinite"></span>`).join("")}</div>`;
+  el.appendChild(typing); el.scrollTop=el.scrollHeight;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYSTEM,messages:chatHistory.map(m=>({role:m.role,content:m.content}))})
+    });
+    const data=await res.json();
+    const reply=data.content?.map(b=>b.text||"").join("")||"Kuch problem aayi. Dobara try karein.";
+    chatHistory.push({role:"assistant",content:reply});
+  }catch{ chatHistory.push({role:"assistant",content:"Network error. Please retry! 🙏"}); }
+  document.getElementById("typing")?.remove();
+  renderMsgs();
+}
+
+function switchTab(name, btn){
+  document.querySelectorAll(".tab,.chat-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  const t=document.getElementById("tab-"+name);
+  t.classList.add("active");
+  btn.classList.add("active");
+  if(name==="chat") initChat();
+}
+
+// Init
+renderCats(); renderProducts(); renderOrders(); renderOffers();
+</script>
+</body>
+</html>
